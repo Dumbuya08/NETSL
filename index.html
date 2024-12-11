@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NET - Njala Environmental Technicians</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Njala Environmental Technicians</h1>
+        <nav>
+            <ul>
+                <li><a href="Mission.html">Mission</a></li>
+                <li><a href="Offerings.html">Offerings</a></li>
+                <li><a href="Solutions.html">Solutions</a></li>
+                <li><a href="Portfolio.html">Portfolio</a></li>
+                <li><a href="Profile-Settings.html">Profile-Settings</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Upload Files</h1>
+        <form id="uploadForm">
+            <input type="text" name="filename" placeholder="Enter file name" required>
+            <input type="file" id="fileInput" name="files" multiple required>
+            <button type="submit">Upload</button>
+        </form>
+
+        <h2>Uploaded Files</h2>
+        <ul id="file-list">
+            <!-- List of uploaded files will be displayed here -->
+        </ul>
+    </main>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+    
+            const formData = new FormData(this);
+    
+            // Send the file to the backend
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            });
+    
+            const result = await response.json();
+            console.log('File uploaded:', result);
+            loadFiles(); // Refresh file list
+        });
+    
+        // Function to fetch and display uploaded files
+        async function loadFiles() {
+            const response = await fetch('/files');
+            const files = await response.json();
+    
+            const fileList = document.getElementById('file-list');
+            fileList.innerHTML = ''; // Clear current list
+    
+            files.forEach((file) => {
+                const listItem = document.createElement('li');
+    
+                const link = document.createElement('a');
+                link.href = file.filepath;
+                link.textContent = file.filename;
+                link.target = '_blank';
+    
+                listItem.appendChild(link);
+                fileList.appendChild(listItem);
+            });
+        }
+    
+        // Load files on page load
+        loadFiles();
+    </script>
+    
+</body>
+</html>
